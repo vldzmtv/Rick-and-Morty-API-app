@@ -1,62 +1,69 @@
 <script setup>
-import {useRouter} from "vue-router";
+import { useRouter } from "vue-router";
 import axios from "axios";
-import { ref, onMounted } from "vue";
+import { ref, onMounted} from "vue";
 
-let page = ref(1);
-const charactersList  = ref([])
-const router = useRouter()
+let page = ref(1)
+const episodesList = ref([])
 const totalPages = ref(null)
 
-async function loadData (){
-  try{
-    const response = await axios.get(`https://rickandmortyapi.com/api/character?page=${page.value}`);
-    charactersList.value.push(...response.data.results)
+const router = useRouter()
+
+async function loadData() {
+  try {
+    const response = await axios.get(`https://rickandmortyapi.com/api/episode?page=${page.value}`)
+    episodesList.value.push(...response.data.results)
 
     if (totalPages.value === null) {
       totalPages.value = response.data.info.pages
     }
   }
-  catch(error){
+  catch (error) {
     console.error(error)
   }
 }
-
 function loadMore() {
   page.value++;
- loadData()
-}
-function goDetailsCharacter(id) {
-  router.push({ name: 'CharacterDetail', params: { id }})
+  loadData()
 }
 
+function goDetailsEpisodes(id) {
+  router.push({ name: 'EpisodeDetail', params: { id }})
+}
+
+function formatEpisodeCode(code){
+  const match = code.match(/S(\d+)E(\d+)/i)
+  if (!match){
+    return code
+  }
+  const season = parseInt(match[1], 10)
+  const episode = parseInt(match[2], 10)
+
+  return `Season ${season}, Episode ${episode}`
+}
 onMounted(() => {
   loadData()
 })
+
 </script>
 
 <template>
-  <section class="mainContent">
-    <h1 class="title-section">Character</h1>
-    <div class="characterAllCard">
-      <div v-for="character in charactersList"
-           class="characterCard"
-           :key="character.id"
-           @click="goDetailsCharacter(character.id)"
+  <section class="main-content">
+    <h1 class="title-section">Episodes</h1>
+    <div class="episodes-all-card">
+      <div v-for="episode in episodesList"
+           class="episodeCard"
+           :key="episode.id"
+           @click="goDetailsEpisodes(episode.id)"
       >
-        <img
-            :src="character.image"
-            :alt="character.name"
-        >
-        <div class="characterInfo" >
-          <h2 class="characterName">{{ character.name}}</h2>
-          <p><span class="label">Status: </span> {{ character.status }}</p>
-          <p><span class="label">Species: </span>{{ character.species}}</p>
-          <p><span class="label">Location: </span>{{ character.location.name}}</p>
+        <div class="episodeInfo">
+          <h2 class="episode-name">{{ episode.name}}</h2>
+          <p>{{ formatEpisodeCode(episode.episode)}}</p>
+          <p><span class="label">Air date: </span> {{ episode.air_date}}</p>
         </div>
       </div>
     </div>
-    <div class="btnContainer"  v-if="page < totalPages">
+    <div class="btn-container" v-if="page < totalPages">
       <button @click="loadMore" class="loadBtn">
         Show more
       </button>
@@ -65,24 +72,23 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.main-content {
+  background: #0F3A40;
+  min-height: 100vh;
+}
 .title-section {
   color: #FFFFFF;
   text-align: center;
   padding-top: 10px;
   font-size: 40px;
 }
-.mainContent {
-  background: #0F3A40;
-  min-height: 100vh;
-
-}
-.characterAllCard {
+.episodes-all-card {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
 }
-.characterCard {
+.episodeCard {
   width: 700px;
   height: 220px;
   display: flex;
@@ -97,24 +103,25 @@ onMounted(() => {
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.characterCard:hover {
+.episodeCard:hover {
   transform: scale(1.05);
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
 }
-.characterName {
+.episode-name {
   color: #EBFF6E;
 }
-.characterInfo {
+
+.episodeInfo {
   flex-direction: row;
   padding: 15px;
 }
-
-.btnContainer{
+.btn-container {
   display: flex;
   justify-content: center;
   width: 100%;
   padding-top: 20px;
   padding-bottom: 20px;
+
 }
 .loadBtn {
   padding: 10px 20px;
@@ -126,6 +133,7 @@ onMounted(() => {
   font-size: 32px;
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+
 }
 .loadBtn:hover {
   transform: scale(1.05);

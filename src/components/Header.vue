@@ -6,16 +6,18 @@
   <header class="header">
     <div class="container">
       <div class="headerIn">
-        <img
-            src="@/assets/Rick_and_Morty.svg"
-            alt=""
-            class="logo"
-        >
+        <router-link to="/">
+          <img
+              src="@/assets/Rick_and_Morty.svg"
+              alt=""
+              class="logo"
+          >
+        </router-link>
         <nav class="menu">
           <ul class="menuList">
-            <li class="menuListItem"><a href="" class="menuListItemLink">Персонажи</a></li>
-            <li class="menuListItem"><a href="" class="menuListItemLink">Локации</a></li>
-            <li class="menuListItem"><a href="" class="menuListItemLink">Эпизоды</a></li>
+            <li class="menuListItem"><router-link to="/" class="menuListItemLink">Characters</router-link></li>
+            <li class="menuListItem"><router-link to="/locations" class="menuListItemLink">Locations</router-link></li>
+            <li class="menuListItem"><router-link to="/episodes" class="menuListItemLink">Episodes</router-link></li>
           </ul>
         </nav>
       </div>
@@ -48,13 +50,21 @@ a {
 .menuList {
   display: flex;
   list-style: none;
+
 }
+
 .menuListItem {
   margin-right: 20px;
 }
 .menuListItemLink {
+  display: inline-block;
   padding: 10px 20px;
   font-size: 20px;
   cursor: pointer;
+  transition: color 0.3s, transform 0.3s;
+}
+.menuListItemLink:hover {
+  color: #EBFF6E;
+  transform: scale(1.1);
 }
 </style>
